@@ -1,4 +1,3 @@
-import { Wind, Mountain, Footprints } from 'lucide-react';
 import { ThemeConfig, NarrativeTexts, EnvironmentType } from '../types';
 
 // Visual & Gameplay Constants
@@ -10,10 +9,11 @@ export const SPAWN_DISTANCE = 300; // How often a new segment spawns
 export const FOG_COLOR = '#0A0A0B';
 
 // Narrative / Thematic Constants
-export const THEMES: Record<string, ThemeConfig> = {
-  CARRYING: { color: '#A3A3A3', label: 'Aid', icon: <Footprints size={16} /> },
-  DISCIPLINE: { color: '#F5F5F5', label: 'Duty', icon: <Mountain size={16} /> },
-  HUNGER: { color: '#52525B', label: 'Hunger', icon: <Wind size={16} /> },
+// Note: Icons are added at runtime in the components that need them
+export const THEME_LABELS: Record<string, { color: string; label: string }> = {
+  CARRYING: { color: '#A3A3A3', label: 'Aid' },
+  DISCIPLINE: { color: '#F5F5F5', label: 'Duty' },
+  HUNGER: { color: '#52525B', label: 'Hunger' },
 };
 
 export const NARRATIVE_POOL: NarrativeTexts[] = [

@@ -1,6 +1,6 @@
 import React from 'react';
 import { LaneContent } from '../../types';
-import { THEMES } from '../../constants';
+import { THEME_LABELS } from '../../constants';
 
 interface PromptMarkerProps {
   lane: LaneContent;
@@ -15,7 +15,7 @@ export const PromptMarker: React.FC<PromptMarkerProps> = ({ lane }) => {
         lane.theme === 'HUNGER' ? 'text-red-300/70' : 
         lane.theme === 'CARRYING' ? 'text-blue-200/70' : 'text-gray-400'
       }`}>
-        {THEMES[lane.theme].label}
+        {THEME_LABELS[lane.theme].label}
       </div>
       <div className="font-['Spectral'] text-lg italic text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
         {lane.text}

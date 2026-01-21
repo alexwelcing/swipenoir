@@ -1,4 +1,3 @@
-```javascript
 import React, { useState } from 'react';
 import { GameState, PlayerMemoryState, ActivePrompt, EnvironmentType } from './types';
 import { GAME_SPEED_BASE } from './constants';
@@ -87,27 +86,6 @@ export default function TheRoadThatRemembers() {
 
       {/* Start Screen */}
       {gameState === 'START' && <StartScreen />}
-
-      {/* Global Styles & Animations */}
-      <style>{`
-        .perspective-container {
-          perspective: 800px;
-          overflow: hidden;
-        }
-        .preserve-3d {
-          transform-style: preserve-3d;
-        }
-        @keyframes fade-up {
-          0% { opacity: 0; transform: translateY(20px); }
-          20% { opacity: 1; transform: translateY(0); }
-          80% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-20px); }
-        }
-        .animate-fade-up {
-          animation: fade-up 2s ease-in-out forwards;
-        }
-      `}</style>
     </div>
   );
 }
-```
