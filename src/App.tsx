@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GameState, PlayerMemoryState, ActivePrompt, EnvironmentType } from './types';
 import { GAME_SPEED_BASE } from './constants';
 import { Header } from './components/UI/Header';
@@ -48,14 +48,21 @@ export default function TheRoadThatRemembers() {
   });
 
   // Input handler hook
+  const playerTargetLaneRef = useRef(playerRef.current.targetLane);
+  
+  // Sync playerTargetLaneRef with playerRef
+  useEffect(() => {
+    const syncInterval = setInterval(() => {
+      playerRef.current.targetLane = playerTargetLaneRef.current;
+    }, 16); // ~60fps sync
+    return () => clearInterval(syncInterval);
+  }, [playerRef]);
+
   useInputHandler({
     gameState,
     setGameState,
     startGameLoop,
-    playerTargetLane: {
-      get current() { return playerRef.current.targetLane; },
-      set current(value) { playerRef.current.targetLane = value; }
-    } as React.MutableRefObject<number>,
+    playerTargetLane: playerTargetLaneRef,
   });
 
   return (
