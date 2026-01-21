@@ -1,0 +1,104 @@
+{
+  "dataModels": [
+    {
+      "name": "PlayerMemoryState",
+      "fields": [
+        "carryingCount: integer",
+        "disciplineCount: integer",
+        "hungerCount: integer",
+        "distanceTraveled: float",
+        "currentSpeed: float"
+      ],
+      "relationships": "Input for WorldGenerator to bias probability tables"
+    },
+    {
+      "name": "TrackSegmentDefinition",
+      "fields": [
+        "segmentId: string",
+        "laneObstacles: boolean[3]",
+        "lanePrompts: string[3]",
+        "environmentTag: string",
+        "difficultyWeight: float"
+      ],
+      "relationships": "Instantiated by WorldGenerator"
+    },
+    {
+      "name": "NarrativeEvent",
+      "fields": [
+        "eventId: string",
+        "promptText: string",
+        "associatedLane: enum(Left, Center, Right)",
+        "memoryImpact: string"
+      ],
+      "relationships": "Overlays onto TrackSegments"
+    }
+  ],
+  "components": [
+    {
+      "name": "LaneMovementController",
+      "responsibility": "Handles seamless lane switching inputs and character physics without pausing.",
+      "stateRequired": [
+        "currentLaneIndex",
+        "isChangingLane",
+        "movementSpeed"
+      ],
+      "methods": [
+        "MoveLeft()",
+        "MoveRight()",
+        "DetectCollision()",
+        "ApplySpeedModifier(float)"
+      ]
+    },
+    {
+      "name": "WorldGenerator",
+      "responsibility": "Spawns road segments dynamically based on the player's aggregate 'Memory' state.",
+      "stateRequired": [
+        "activeSegmentsQueue",
+        "spawnZOffset",
+        "playerMemoryRef"
+      ],
+      "methods": [
+        "SelectNextSegment(MemoryState)",
+        "SpawnSegment(Vector3)",
+        "RecycleSegment(SegmentId)"
+      ]
+    },
+    {
+      "name": "NarrativeDirector",
+      "responsibility": "Injects floating text prompts into the world and updates player state when specific lanes are traversed.",
+      "stateRequired": [
+        "activePrompts",
+        "lastTriggerTime"
+      ],
+      "methods": [
+        "DisplayPrompt(string, laneIndex)",
+        "ResolveChoice(laneIndex)",
+        "UpdateWorldAtmosphere(MemoryState)"
+      ]
+    },
+    {
+      "name": "GameLoopManager",
+      "responsibility": "Manages the core loop, speed progression, and game over states without menu interruptions.",
+      "stateRequired": [
+        "isRunning",
+        "globalTimeScale"
+      ],
+      "methods": [
+        "StartRun()",
+        "EndRun()",
+        "ResetToCheckpoint()"
+      ]
+    }
+  ],
+  "logicFlows": [
+    "Run Start: Initialize PlayerMemoryState to zero -> Set initial speed -> Spawn first 5 'Neutral' segments.",
+    "Dynamic Spawning: On Update -> Check distance to last segment -> WorldGenerator reads PlayerMemoryState (e.g., if hungerCount is high, spawn segments with food but high risk) -> Instantiate Segment -> Remove passed segments.",
+    "Narrative Choice: Player enters 'Choice Segment' -> NarrativeDirector renders world-space text above lanes (Aid/Order/Hunger) -> Player commits to lane -> On exiting segment, update PlayerMemoryState -> Adjust fog/lighting intensity based on dominant state.",
+    "Collision: Player hits obstacle -> Reduces currentSpeed (not death in MVP, just loss of flow) -> Visual glitch effect -> Narrative 'regret' text appears briefly."
+  ],
+  "securityRequirements": [
+    "Local Save Integrity: Simple checksum validation to prevent editing JSON save files for memory states.",
+    "Input Sanitization: Ensure rapid lane-switching inputs do not cause physics tunnelling or out-of-bounds glitches.",
+    "No Network/Auth: MVP is strictly offline local execution."
+  ]
+}
